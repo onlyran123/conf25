@@ -1,84 +1,127 @@
-  ["Universal"] = {
-        ['Indicators'] = { ['Enabled'] = (true) },
+local Universal = {
+    Indicators = { Enabled = true },
+}
+
+local SilentAim = {
+    Enabled = true,
+    Toggle = 'T',
+    Field = 'Box',
+    Mode = 'Automatic',
+    Prediction = {
+        Enabled = true,
+        Ground = 0.135,
+        Air = 0.135,
+        Automated = false,
+        Stabilize = 4.8,
+        YStabilize = { Enabled = false, Value = 2 }
     },
+    Point = 'Nearest Point',
+    Scale = 0.2,
+    Type = 'Advanced',
+    Parts = {'Head'}
+}
+
+local AimAssist = {
+    Enabled = true,
+    Toggle = 'C',
+    Bezier = true,
+    Sticky = true,
+    Smoothing = { Enabled = true, Ground = 0.055, Air = 0.088 },
+    Prediction = { Enabled = true, Ground = 0.15, Air = 0.15 },
+    Point = 'Default',
+    Scale = 0.2,
+    Type = 'Basic',
+    Parts = {'Head'},
+    Easing = 'Linear'
+}
+
+
+local TriggerBot = {
+    Enabled = true,
+    Toggle = 'K',
+    Input = 'Keyboard',
+    Field = 'Cursor',
+    Type = 'Toggle',
+    Prediction = { Enabled = false, Ground = 0.125, Air = 0.125, Threshold = 25 },
+    Interval = { Enabled = false, Weapon = { ['[Double-Barrel SG]'] = 1, ['[TacticalShotgun]'] = 1, ['[Revolver]'] = 1 } },
+    Magnitude = { ['Weapon'] = { ['[Double-Barrel SG]'] = { X = 26, Y = 50 }, ['[TacticalShotgun]'] = { X = 50, Y = 50 }, ['[Revolver]'] = { X = 26, Y = 50 } } }
+}
+
+local Physics = {
+    Walking = { Enabled = true, Toggle = 'V', Amount = 5 },
+    Falling = { Enabled = true },
+    Jumping = { Enabled = true },
+    Velocity = { AlwaysOn = false, Magnitude = 150 }
+}
+
+
+local RaidAwareness = {
+    Enabled = true,
+    Select = 'T',
+    Clear = 'Z',
+    Outlines = false,
+    Box = true,
+    Name = true
+}
+
+local Modifications = {
+    CooldownReduction = { Enabled = true, Weapon = { ['[Double-Barrel SG]'] = 0.5, ['[Revolver]'] = 0.13 } },
+    ClientRedirection = { Enabled = false },
+    SpreadReduction = { Enabled = true, Weapon = { ['[Double-Barrel SG]'] = 0.5, ['[TacticalShotgun]'] = 0.5, ['[Shotgun]'] = 0.8, ['[Drum-Shotgun]'] = 1 }, Randomizer = { Enabled = false, Value = math.random(0.1, 0.4) } },
+    DelayReduction = { Enabled = true, Weapon = { ['[Double-Barrel SG]'] = 0.0095, ['[Revolver]'] = 0.0055 } },
+    DoubleTap = { Enabled = true, Toggle = 'E', Weapon = { '[Silencer]', '[Revolver]' } },
+    BeamColor = { Enabled = false, Color = Color3.new(0.560784, 0.894117, 0.901960) }
+}
+
+
+local Conditions = {
+    Forcefield = true,
+    Visible = true,
+    Knocked = true,
+    Grabbed = true,
+    Typing = true,
+    Moving = false,
+    Alive = true,
+    Wall = true,
+    Tool = true
+}
+
+
+local Fields = {
+    AimAssistField = { Size = 500 },
+    SilentAimField = { Size = 110 },
+    TriggerBotField = { Size = 5.5 },
+    SilentAimBoxField = { Visible = false, Sync = false, Width = 8, Height = 8 }
+}
+
+local function safeGetService(serviceName)
+    local success, service = pcall(function()
+        return game:GetService(serviceName)
+    end)
+    if success then
+        return service
+    else
+        warn("Service '" .. serviceName .. "' is not available in this environment.")
+        return nil
+    end
+end
+
+local Players = safeGetService('Players')
+local ReplicatedStorage = safeGetService('ReplicatedStorage')
+
+local ThirdPartyUserService = safeGetService('ThirdPartyUserService')
+if ThirdPartyUserService then
     
-    ["SilentAim"] = {
-        ['Enabled'] = (true),
-        ['Toggle'] = ('T'),
-        ['Field'] = ('Box'), 
-        ['Mode'] = ('Automatic'), 
-                                                                                                                 
-        ['Prediction'] = { ['Enabled'] = (true), ['Ground'] = (0.135), ['Air'] = (0.135), ['Automated'] = (false), ['Stabilize'] = (4.8), ['YStabilize'] = { ['Enabled'] = (false), ['Value'] = (2) } },
-                                                          
-        ['Point'] = ('Nearest Point'), ['Scale'] = (0.2), ['Type'] = ('Advanced'), 
-        ['Parts'] = {'Head'} --[[ https://create.roblox.com/docs/reference/engine/enums/BodyPartR15 ]]
-    },
-    
-    ["AimAssist"] = {
-        ['Enabled'] = (true),
-        ['Toggle'] = ('C'), 
-        ['Bezier'] = (true), 
-        ['Sticky'] = (true), 
+else
+    warn("ThirdPartyUserService is not available.")
+end
 
-        ['Smoothing'] = { ['Enabled'] = (true), ['Ground'] = (0.055), ['Air'] = (0.088) },
 
-        ['Prediction'] = { ['Enabled'] = (true), ['Ground'] = (0.15), ['Air'] = (0.15) },
-                                                            -
-        ['Point'] = ('Default'), ['Scale'] = (0.2), ['Type'] = ('Basic'),
-        ['Parts'] = {'Head'}, --[[ https://create.roblox.com/docs/reference/engine/enums/BodyPartR15 ]]
-
-        ['Easing'] = ('Linear')
-        --[[ https://create.roblox.com/docs/reference/engine/enums/EasingStyle ]]
-    },
+local function onInputBegan(input)
+    if input.KeyCode == Enum.KeyCode[ToggledKey] then
         
-    ["TriggerBot"] = {
-        ['Enabled'] = (true),
-        ['Toggle'] = ('K'),
-        ['Input'] = ('Keyboard'), 
-        ['Field'] = ('Cursor'), 
-        ['Type'] = ('Toggle'),  
-        
-        ['Prediction'] = { ['Enabled'] = (false), ['Ground'] = (0.125), ['Air'] = (0.125), ['Threshold'] = (25) }, 
-    
-        ['Interval'] = { ['Enabled'] = (false), ['Weapon'] = { ['[Double-Barrel SG]'] = (1), ['[TacticalShotgun]'] = (1), ['[Revolver]'] = (1) } }, 
-       
-        ['Magnitude'] = { ['Weapon'] = { ['[Double-Barrel SG]'] = { X = (26), Y = (50) }, ['[TacticalShotgun]'] = { X = (50), Y = (50) }, ['[Revolver]'] = { X = (26), Y = (50) } } } --
-    },
+    end
+end
 
-    ["Physics"] = {
-        ['Walking'] = { ['Enabled'] = (true), ['Toggle'] = ('V'), ['Amount'] = (5) }, 
-        ['Falling'] = { ['Enabled'] = (true) }, 
-        ['Jumping'] = { ['Enabled'] = (true) },
-        ['Velocity'] = { ['Always On'] = (false), ['Magnitude'] = 150 }
-    },  
 
-    ['Raid Awareness'] = { ['Enabled'] = (true), ['Select'] = ('T'), ['Clear'] = ('Z'), ['Outlines'] = (false), ['Box'] = (true), ['Name'] = (true) },
-
-    ["Modifications"] = {                                     
-        ['Cooldown Reduction'] = { ['Enabled'] = (true), ['Weapon'] = { ['[Double-Barrel SG]'] = (0.5), ['[Revolver]'] = (0.13) } },                                                                                                                                                                                       
-        ['Client Redirection'] = { ['Enabled'] = (false) }, 
-        ['Spread Reduction'] = { ['Enabled'] = (true), ['Weapon'] = { ['[Double-Barrel SG]'] = (.5), ['[TacticalShotgun]'] = (.5), ['[Shotgun]'] = (0.8), ['[Drum-Shotgun]'] = (1) }, ['Randomizer'] = { ['Enabled'] = (false), ['Value'] = math.random(0.1, 0.4) } },
-        ['Delay Reduction'] = { ['Enabled'] = (true), ['Weapon'] = { ['[Double-Barrel SG]'] = (0.0095), ['[Revolver]'] = (0.0055) } }, 
-        ['Double Tap'] = { ['Enabled'] = (true), ['Toggle'] = ('E'), ['Weapon'] = { ('[Silencer]'), ('[Revolver]') } }, 
-        ['Beam Color'] = { ['Enabled'] = (false), ['Color'] = (Color3.new(0.560784, 0.894117, 0.901960)) },
-
-    },
-    
-    ["Conditions"] = {
-        ['Forcefield'] = (true),
-        ['Visible'] = (true),
-        ['Knocked'] = (true),
-        ['Grabbed'] = (true),
-        ['Typing'] = (true),
-        ['Moving'] = (false), 
-        ['Alive'] = (true),
-        ['Wall'] = (true),
-        ['Tool'] = (true),
-    },
-    
-    ["Fields"] = {
-        ['AimAssistField'] = { ['Size'] = (500) },
-        ['SilentAimField'] = { ['Size'] = (110) },
-        ['TriggerBotField'] = { ['Size'] = (5.5) },
-        ['SilentAimBoxField'] = { ['Visible'] = (false), ['Sync'] = (false), ['Width'] = (8), ['Height'] = (8) }
-    },
+game:GetService('UserInputService').InputBegan:Connect(onInputBegan)
